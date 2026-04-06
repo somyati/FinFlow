@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Dashboard 3D</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <!-- <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script> -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script>
+  const CURRENCIES = {
+    US: { code: 'USD', symbol: '$', locale: 'en-US', decimals: 2 },
+    IN: { code: 'INR', symbol: '₹', locale: 'en-IN', decimals: 2 },
+    GB: { code: 'GBP', symbol: '£', locale: 'en-GB', decimals: 2 },
+    CA: { code: 'CAD', symbol: 'C$', locale: 'en-CA', decimals: 2 },
+    AU: { code: 'AUD', symbol: 'A$', locale: 'en-AU', decimals: 2 },
+    EU: { code: 'EUR', symbol: '€', locale: 'de-DE', decimals: 2 },
+    JP: { code: 'JPY', symbol: '¥', locale: 'ja-JP', decimals: 0 },
+    CH: { code: 'CHF', symbol: 'CHF', locale: 'de-CH', decimals: 2 }
+  };
+
+  const STRINGS = {
+    en: {
+      dashboardTitle: 'Finance Dashboard',
+      welcomeBack: 'Welcome back',
+      admin: 'Admin',
+      viewer: 'Viewer',
+      overview: 'Overview',
+      transactions: 'Transactions',
+      insights: 'Insights',
+      totalBalance: 'Total Balance',
+      income: 'Income',
+      expenses: 'Expenses',
+      savings: 'Savings',
+      balanceTrend: 'Balance Trend',
+      spendingBreakdown: 'Spending Breakdown',
+      search: 'Search transactions...',
+      allTypes: 'All Types',
+      allCategories: 'All Categories',
+      addTransaction: 'Add Transaction',
+      editTransaction: 'Edit Transaction',
+      date: 'Date',
+      description: 'Description',
+      category: 'Category',
+      type: 'Type',
+      amount: 'Amount',
+      actions: 'Actions',
+      add: 'Add',
+      csv: 'CSV',
+      noTransactions: 'No transactions found',
+      topSpending: 'Top Spending',
+      avgTransaction: 'Avg Transaction',
+      savingsRate: 'Savings Rate',
+      totalTransactions: 'Total Transactions',
+      biggestExpense: 'Biggest Expense',
+      categoriesUsed: 'Categories Used',
+      monthlyComparison: 'Monthly Comparison',
+      login: 'Login',
+      createAccount: 'Create Account',
+      email: 'Email',
+      password: 'Password',
+      fullName: 'Full Name',
+      back: 'Back',
+      logout: 'Logout',
+      loggedInAs: 'Logged in as',
+      demo: 'Demo: Use any email and password',
+      delete: 'Delete',
+      yes: 'Yes',
+      no: 'No',
+      sort: 'Sort',
+      newestFirst: 'Newest First',
+      oldestFirst: 'Oldest First',
+      highestAmount: 'Highest Amount',
+      lowestAmount: 'Lowest Amount'
+    },
+    hi: {
+      dashboardTitle: 'वित्त डैशबोर्ड',
+      welcomeBack: 'स्वागत है वापसी पर',
+      admin: 'प्रशासक',
+      viewer: 'दर्शक',
+      overview: 'अवलोकन',
+      transactions: 'लेनदेन',
+      insights: 'अंतर्दृष्टि',
+      totalBalance: 'कुल शेष',
+      income: 'आय',
+      expenses: 'व्यय',
+      savings: 'बचत',
+      balanceTrend: 'शेष प्रवृत्ति',
+      spendingBreakdown: 'व्यय विवरण',
+      search: 'लेनदेन खोजें...',
+      allTypes: 'सभी प्रकार',
+      allCategories: 'सभी श्रेणियां',
+      addTransaction: 'लेनदेन जोड़ें',
+      editTransaction: 'लेनदेन संपादित करें',
+      date: 'तारीख',
+      description: 'विवरण',
+      category: 'श्रेणी',
+      type: 'प्रकार',
+      amount: 'राशि',
+      actions: 'कार्य',
+      add: 'जोड़ें',
+      csv: 'CSV',
+      noTransactions: 'कोई लेनदेन नहीं मिला',
+      topSpending: 'शीर्ष व्यय',
+      avgTransaction: 'औसत लेनदेन',
+      savingsRate: 'बचत दर',
+      totalTransactions: 'कुल लेनदेन',
+      biggestExpense: 'सबसे बड़ा व्यय',
+      categoriesUsed: 'उपयोग की गई श्रेणियां',
+      monthlyComparison: 'मासिक तुलना',
+      login: 'लॉगिन करें',
+      createAccount: 'खाता बनाएं',
+      email: 'ईमेल',
+      password: 'पासवर्ड',
+      fullName: 'पूरा नाम',
+      back: 'पीछे',
+      logout: 'लॉग आउट करें',
+      loggedInAs: 'यह लॉगिन है',
+      demo: 'डेमो: किसी भी ईमेल और पासवर्ड का उपयोग करें',
+      delete: 'हटाएं',
+      yes: 'हाँ',
+      no: 'नहीं',
+      sort: 'क्रमांकन',
+      newestFirst: 'नवीनतम पहले',
+      oldestFirst: 'पुराने पहले',
+      highestAmount: 'सर्वोच्च राशि',
+      lowestAmount: 'न्यूनतम राशि'
+    }
+  };
+
+  window.t = (key) => STRINGS[window.APP?.state?.language || 'en'][key] || key;
+  </script>
+  <style>
+  html, body { height: 100%; margin: 0; }
+  * { box-sizing: border-box; }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  
+  .gradient-primary { background: linear-gradient(135deg, #0f172a 0%, #020617 50%, #001f3f 100%); }
+  .gradient-accent { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 50%, #22c55e 100%); }
+  .gradient-text { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 50%, #22c55e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  
+  .light-mode { 
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f7fa;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+  }
+  
+  .dark-mode {
+    --bg-primary: linear-gradient(135deg, #0f172a 0%, #020617 50%, #001f3f 100%);
+    --bg-secondary: rgba(255, 255, 255, 0.05);
+    --text-primary: #e5e7eb;
+    --text-secondary: #94a3b8;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  body.dark-mode { background: linear-gradient(135deg, #0f172a 0%, #020617 50%, #001f3f 100%); color: #e5e7eb; }
+  body.light-mode { background: #f8f9fa; color: #1f2937; }
+  
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.3), inset 0 0 20px rgba(79, 70, 229, 0.1); } 50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.5), inset 0 0 30px rgba(79, 70, 229, 0.2); } }
+  @keyframes pulse-border { 0%, 100% { border-color: rgba(79, 70, 229, 0.2); } 50% { border-color: rgba(6, 182, 212, 0.4); } }
+  @keyframes card3DRotate { 
+    0% { transform: perspective(1000px) rotateX(0deg) rotateY(-2deg); }
+    50% { transform: perspective(1000px) rotateX(3deg) rotateY(2deg); }
+    100% { transform: perspective(1000px) rotateX(0deg) rotateY(-2deg); }
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes pulse-glow { 
+    0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.3), 0 0 40px rgba(6, 182, 212, 0.15); }
+    50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.5), 0 0 80px rgba(6, 182, 212, 0.3); }
+  }
+  @keyframes float-slow { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+  
+  .fade-up { animation: fadeUp 0.5s ease both; }
+  .fade-up-1 { animation-delay: 0.05s; }
+  .fade-up-2 { animation-delay: 0.1s; }
+  .fade-up-3 { animation-delay: 0.15s; }
+  .fade-up-4 { animation-delay: 0.2s; }
+  .fade-up-5 { animation-delay: 0.25s; }
+  
+  .card-3d-hover {
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  
+  .card-3d-hover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  
+  .card-3d-hover:hover::before { 
+    opacity: 1;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .card-3d-hover:hover { 
+    transform: translateY(-16px) rotateX(8deg) rotateY(-2deg) scale(1.05);
+    box-shadow: 0 30px 60px rgba(79, 70, 229, 0.25), 0 0 40px rgba(6, 182, 212, 0.15), inset 0 0 30px rgba(79, 70, 229, 0.1);
+  }
+  
+  .dark-mode .card-3d-hover { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+  .light-mode .card-3d-hover { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(229, 231, 235, 0.5); }
+  
+  .auth-form-container { min-height: 100%; display: flex; align-items: center; justify-content: center; }
+  .auth-card { animation: slideIn 0.6s ease both; }
+  .floating-shape { animation: float-slow 8s ease-in-out infinite; }
+  .glow-effect { animation: glow 3s ease-in-out infinite; }
+  .pulse-border-anim { animation: pulse-border 2s ease-in-out infinite; }
+  .button-glow { transition: all 0.3s ease; }
+  .button-glow:hover { box-shadow: 0 0 30px rgba(79, 70, 229, 0.5), 0 0 60px rgba(6, 182, 212, 0.3); transform: scale(1.05); }
+  
+  .chart-bar { transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .donut-segment { transition: stroke-dasharray 0.8s ease, stroke-dashoffset 0.8s ease; }
+  
+  .tab-active { 
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, #4f46e5 0%, #06b6d4 50%, #22c55e 100%) 1;
+    background: linear-gradient(180deg, rgba(79, 70, 229, 0.1) 0%, transparent 100%);
+    color: #4f46e5;
+  }
+  
+  .toast { animation: fadeUp 0.3s ease both; }
+  .role-badge { transition: all 0.3s ease; }
+  
+  input:focus, select:focus, textarea:focus { 
+    outline: none; 
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2), 0 0 20px rgba(79, 70, 229, 0.3);
+    border-color: rgba(79, 70, 229, 0.6);
+  }
+  
+  .gradient-animated {
+    background: linear-gradient(-45deg, #0f172a, #001f3f, #020617, #0f172a);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    animation: float-slow 20s ease-in-out infinite;
+  }
+  
+  .accent-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  
+  .card-glass {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  body { box-sizing: border-box; }
+  </style>
+ </head>
+ <body class="h-full text-gray-200 font-sans dark-mode" onload="window.APP.init()">
+  <div id="app" class="h-full w-full flex flex-col overflow-auto scrollbar-thin">
+   <div id="auth-panel" class="auth-form-container fixed inset-0 z-50 gradient-animated backdrop-blur-sm">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+     <div class="particle absolute w-96 h-96 rounded-full opacity-10" style="background: linear-gradient(135deg, #4f46e5, #06b6d4); top: -20%; left: -10%; animation-delay: 0s;"></div>
+     <div class="particle absolute w-80 h-80 rounded-full opacity-5" style="background: linear-gradient(135deg, #22c55e, #4f46e5); bottom: -15%; right: -5%; animation-delay: 2s;"></div>
+     <div class="particle absolute w-64 h-64 rounded-full opacity-10" style="background: linear-gradient(135deg, #06b6d4, #22c55e); top: 50%; left: 50%; animation-delay: 4s;"></div>
+    </div>
+    <div class="auth-card w-full max-w-md px-4 relative z-10">
+     <div class="relative mb-8">
+      <div class="floating-shape absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-30 blur-3xl" style="background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);"></div>
+      <h1 class="relative text-4xl font-bold gradient-text mb-2 tracking-tight">FinFlow</h1>
+      <p class="text-gray-400 text-sm">Smart Finance Dashboard 3D</p>
+     </div>
+     <div id="auth-content" class="space-y-4"></div>
+    </div>
+   </div>
+   <div id="main-dashboard" class="hidden h-full w-full flex flex-col">
+    <header class="sticky top-0 z-30 gradient-primary backdrop-blur-md border-b border-white/5 px-4 sm:px-6 py-4 shadow-2xl">
+     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl gradient-accent flex items-center justify-center shadow-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 text-white"></i>
+       </div>
+       <div>
+        <h1 id="dashboard-title" class="text-xl font-bold text-white tracking-tight">Finance Dashboard</h1>
+        <p id="user-greeting" class="text-xs text-gray-400">Welcome back</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+       <button onclick="window.APP.toggleTheme()" class="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all text-gray-400 hover:text-white accent-glow"><i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i></button> <select id="language-select" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-gray-300 cursor-pointer transition-all" onchange="window.APP.switchLanguage(this.value)"> <option value="en">English</option> <option value="hi">हिंदी</option> </select> <select id="country-select" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-gray-300 cursor-pointer transition-all" onchange="window.APP.switchCountry(this.value)"> <option value="US">🇺🇸 USD - USA</option> <option value="IN">🇮🇳 INR - India</option> <option value="GB">🇬🇧 GBP - UK</option> <option value="CA">🇨🇦 CAD - Canada</option> <option value="AU">🇦🇺 AUD - Australia</option> <option value="EU">🇪🇺 EUR - Europe</option> <option value="JP">🇯🇵 JPY - Japan</option> <option value="CH">🇨🇭 CHF - Switzerland</option> </select>
+       <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10"><i data-lucide="shield" class="w-4 h-4 text-gray-400"></i> <select id="role-select" class="bg-transparent text-sm text-gray-300 border-none cursor-pointer font-medium" onchange="window.APP.switchRole(this.value)"> <option value="admin" class="bg-[#1a2035]">Admin</option> <option value="viewer" class="bg-[#1a2035]">Viewer</option> </select>
+       </div><span id="role-badge" class="role-badge text-xs px-3 py-1.5 rounded-full bg-gradient-accent text-white font-semibold shadow-lg">Admin</span> <button onclick="window.APP.toggleUserMenu()" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all border border-white/10 relative"><i data-lucide="user" class="w-4 h-4"></i></button>
+       <div id="user-menu" class="absolute top-16 right-6 hidden bg-white/10 backdrop-blur-lg rounded-xl border border-white/10 overflow-hidden z-40 shadow-2xl"></div>
+      </div>
+     </div>
+    </header>
+    <nav class="border-b border-white/5 px-4 sm:px-6 bg-white/[0.02] backdrop-blur-sm">
+     <div class="max-w-7xl mx-auto flex gap-8 text-sm"><button onclick="window.APP.showTab('overview')" id="tab-overview" class="py-4 px-1 tab-active font-medium transition-all">Overview</button> <button onclick="window.APP.showTab('transactions')" id="tab-transactions" class="py-4 px-1 text-gray-500 hover:text-gray-300 font-medium transition-all">Transactions</button> <button onclick="window.APP.showTab('insights')" id="tab-insights" class="py-4 px-1 text-gray-500 hover:text-gray-300 font-medium transition-all">Insights</button>
+     </div>
+    </nav>
+    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2"></div>
+    <div id="panel-overview" class="flex-1 px-4 sm:px-6 py-8 overflow-auto scrollbar-thin">
+     <div class="max-w-7xl mx-auto space-y-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+       <div class="fade-up fade-up-1 card-3d-hover rounded-2xl p-6 pulse-border-anim shadow-xl">
+        <div class="flex items-center justify-between mb-4"><span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Balance</span>
+         <div class="w-10 h-10 rounded-lg gradient-accent flex items-center justify-center shadow-lg"><i data-lucide="wallet" class="w-5 h-5 text-white"></i>
+         </div>
+        </div>
+        <p id="card-balance" class="text-3xl font-bold text-white font-mono">$24,580.00</p>
+        <p class="text-xs text-emerald-400 mt-2 font-medium">+12.5% from last month</p>
+       </div>
+       <div class="fade-up fade-up-2 card-3d-hover rounded-2xl p-6 pulse-border-anim shadow-xl">
+        <div class="flex items-center justify-between mb-4"><span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Income</span>
+         <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shadow-lg"><i data-lucide="trending-up" class="w-5 h-5 text-blue-400"></i>
+         </div>
+        </div>
+        <p id="card-income" class="text-3xl font-bold text-white font-mono">$8,450.00</p>
+        <p class="text-xs text-blue-400 mt-2 font-medium">+8.2% from last month</p>
+       </div>
+       <div class="fade-up fade-up-3 card-3d-hover rounded-2xl p-6 pulse-border-anim shadow-xl">
+        <div class="flex items-center justify-between mb-4"><span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Expenses</span>
+         <div class="w-10 h-10 rounded-lg bg-rose-500/20 flex items-center justify-center shadow-lg"><i data-lucide="trending-down" class="w-5 h-5 text-rose-400"></i>
+         </div>
+        </div>
+        <p id="card-expenses" class="text-3xl font-bold text-white font-mono">$5,320.00</p>
+        <p class="text-xs text-rose-400 mt-2 font-medium">-3.1% from last month</p>
+       </div>
+       <div class="fade-up fade-up-4 card-3d-hover rounded-2xl p-6 pulse-border-anim shadow-xl">
+        <div class="flex items-center justify-between mb-4"><span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Savings</span>
+         <div class="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center shadow-lg"><i data-lucide="piggy-bank" class="w-5 h-5 text-violet-400"></i>
+         </div>
+        </div>
+        <p id="card-savings" class="text-3xl font-bold text-white font-mono">$3,130.00</p>
+        <p class="text-xs text-violet-400 mt-2 font-medium">37% savings rate</p>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+       <div class="fade-up fade-up-4 lg:col-span-2 card-3d-hover rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-6">
+         <h2 class="text-lg font-semibold text-white">Balance Trend</h2>
+         <div class="flex gap-2 text-xs"><button onclick="window.APP.setTrendRange('6m')" id="trend-6m" class="px-3 py-1.5 rounded-lg bg-gradient-accent text-white font-medium shadow-md transition-all hover:shadow-lg">6M</button> <button onclick="window.APP.setTrendRange('1y')" id="trend-1y" class="px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-300 transition-all">1Y</button>
+         </div>
+        </div>
+        <div class="relative h-56" id="trend-chart">
+         <svg width="100%" height="100%" id="trend-svg" preserveaspectratio="none"></svg>
+        </div>
+        <div class="flex justify-between text-xs text-gray-500 mt-4 px-1" id="trend-labels"></div>
+       </div>
+       <div class="fade-up fade-up-5 card-3d-hover rounded-2xl p-6 shadow-xl flex flex-col">
+        <h2 class="text-lg font-semibold text-white mb-6">Spending Breakdown</h2>
+        <div class="flex justify-center mb-6 flex-1 flex items-center">
+         <svg width="180" height="180" viewbox="0 0 160 160" id="donut-chart"></svg>
+        </div>
+        <div id="donut-legend" class="space-y-2.5"></div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div id="panel-transactions" class="flex-1 px-4 sm:px-6 py-8 hidden overflow-auto scrollbar-thin">
+     <div class="max-w-7xl mx-auto space-y-5">
+      <div class="flex flex-wrap items-center gap-3">
+       <div class="relative flex-1 min-w-[220px]"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i> <input id="tx-search" type="text" placeholder="Search transactions..." class="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:bg-white/10 transition-all">
+       </div><select id="tx-filter-type" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-gray-300 cursor-pointer transition-all" onchange="window.APP.filterTransactions()"> <option value="all">All Types</option> <option value="income">Income</option> <option value="expense">Expense</option> </select> <select id="tx-filter-cat" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-gray-300 cursor-pointer transition-all" onchange="window.APP.filterTransactions()"> <option value="all">All Categories</option> </select> <select id="tx-sort" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-gray-300 cursor-pointer transition-all" onchange="window.APP.filterTransactions()"> <option value="date-desc">Newest First</option> <option value="date-asc">Oldest First</option> <option value="amount-desc">Highest Amount</option> <option value="amount-asc">Lowest Amount</option> </select> <button id="btn-add-tx" onclick="window.APP.openAddModal()" class="gradient-accent text-black font-semibold text-sm px-4 py-2.5 rounded-lg flex items-center gap-2 button-glow shadow-lg transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Add</button> <button onclick="window.APP.exportCSV()" class="bg-white/5 hover:bg-white/10 text-gray-300 text-sm px-3 py-2.5 rounded-lg flex items-center gap-2 transition-all button-glow border border-white/10"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
+      </div>
+      <div class="card-3d-hover rounded-2xl border border-white/10 overflow-hidden shadow-xl">
+       <div class="hidden sm:grid grid-cols-12 gap-4 px-6 py-4 text-xs text-gray-500 uppercase tracking-wider font-bold border-b border-white/5 bg-white/[0.02]">
+        <div class="col-span-3">
+         Date
+        </div>
+        <div class="col-span-3">
+         Description
+        </div>
+        <div class="col-span-2">
+         Category
+        </div>
+        <div class="col-span-2 text-right">
+         Amount
+        </div>
+        <div class="col-span-2 text-right">
+         Actions
+        </div>
+       </div>
+       <div id="tx-list" class="divide-y divide-white/5 max-h-[500px] overflow-y-auto scrollbar-thin"></div>
+       <div id="tx-empty" class="hidden py-16 text-center text-gray-600"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-30"></i>
+        <p class="text-sm font-medium">No transactions found</p>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div id="panel-insights" class="flex-1 px-4 sm:px-6 py-8 hidden overflow-auto scrollbar-thin">
+     <div class="max-w-7xl mx-auto space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="insights-grid"></div>
+      <div class="card-3d-hover rounded-2xl p-6 border border-white/10 shadow-xl">
+       <h2 class="text-lg font-semibold text-white mb-6">Monthly Comparison</h2>
+       <div class="flex items-end gap-2.5 h-56" id="monthly-bars"></div>
+       <div class="flex gap-3 mt-6 justify-center text-xs text-gray-500" id="monthly-labels"></div>
+      </div>
+     </div>
+    </div>
+    <div id="modal-overlay" class="fixed inset-0 z-40 bg-black/70 backdrop-blur-md hidden flex items-center justify-center p-4" onclick="if(event.target===this)window.APP.closeModal()">
+     <div class="bg-white/10 rounded-2xl border border-white/20 w-full max-w-md p-7 space-y-5 auth-card shadow-2xl">
+      <div class="flex items-center justify-between">
+       <h3 id="modal-title" class="text-xl font-semibold text-white">Add Transaction</h3><button onclick="window.APP.closeModal()" class="text-gray-500 hover:text-gray-300 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="tx-form" onsubmit="window.APP.saveTransaction(event)" class="space-y-4">
+       <input type="hidden" id="tx-edit-id" value="">
+       <div><label for="tx-date" class="block text-xs text-gray-400 mb-2 font-medium">Date</label> <input type="date" id="tx-date" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-200 focus:bg-white/10 transition-all">
+       </div>
+       <div><label for="tx-desc" class="block text-xs text-gray-400 mb-2 font-medium">Description</label> <input type="text" id="tx-desc" required placeholder="e.g., Grocery shopping" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:bg-white/10 transition-all">
+       </div>
+       <div class="grid grid-cols-2 gap-3">
+        <div><label for="tx-amount" class="block text-xs text-gray-400 mb-2 font-medium">Amount</label> <input type="number" id="tx-amount" required min="0.01" step="0.01" placeholder="0.00" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:bg-white/10 transition-all">
+        </div>
+        <div><label for="tx-type" class="block text-xs text-gray-400 mb-2 font-medium">Type</label> <select id="tx-type" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-200 cursor-pointer focus:bg-white/10 transition-all"> <option value="expense">Expense</option> <option value="income">Income</option> </select>
+        </div>
+       </div>
+       <div><label for="tx-cat" class="block text-xs text-gray-400 mb-2 font-medium">Category</label> <select id="tx-cat" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-200 cursor-pointer focus:bg-white/10 transition-all"> <option>Food &amp; Dining</option> <option>Shopping</option> <option>Transport</option> <option>Entertainment</option> <option>Bills &amp; Utilities</option> <option>Health</option> <option>Salary</option> <option>Freelance</option> <option>Investment</option> <option>Other</option> </select>
+       </div><button type="submit" class="w-full gradient-accent text-black font-semibold py-3 rounded-lg transition-all text-sm button-glow shadow-lg">Save Transaction</button>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+  window.APP = {
+    state: {
+      role: 'admin',
+      transactions: [],
+      trendRange: '6m',
+      activeTab: 'overview',
+      isAuthenticated: false,
+      currentUser: null,
+      theme: localStorage.getItem('theme') || 'dark',
+      language: localStorage.getItem('language') || 'en',
+      country: localStorage.getItem('country') || 'US'
+    },
+    
+    defaultConfig: {
+      dashboard_title: 'Finance Dashboard'
+    },
+    
+    mockTransactions: [
+      { id: 1, date: '2025-01-15', desc: 'Salary', amount: 5200, type: 'income', cat: 'Salary' },
+      { id: 2, date: '2025-01-18', desc: 'Grocery Store', amount: 142.50, type: 'expense', cat: 'Food & Dining' },
+      { id: 3, date: '2025-01-20', desc: 'Netflix Subscription', amount: 15.99, type: 'expense', cat: 'Entertainment' },
+      { id: 4, date: '2025-01-22', desc: 'Electric Bill', amount: 89.00, type: 'expense', cat: 'Bills & Utilities' },
+      { id: 5, date: '2025-01-25', desc: 'Freelance Project', amount: 1800, type: 'income', cat: 'Freelance' },
+      { id: 6, date: '2025-02-01', desc: 'Salary', amount: 5200, type: 'income', cat: 'Salary' },
+      { id: 7, date: '2025-02-03', desc: 'Restaurant', amount: 67.30, type: 'expense', cat: 'Food & Dining' },
+      { id: 8, date: '2025-02-05', desc: 'Uber Rides', amount: 34.50, type: 'expense', cat: 'Transport' },
+      { id: 9, date: '2025-02-08', desc: 'New Shoes', amount: 129.99, type: 'expense', cat: 'Shopping' },
+      { id: 10, date: '2025-02-10', desc: 'Gym Membership', amount: 45.00, type: 'expense', cat: 'Health' },
+      { id: 11, date: '2025-02-14', desc: 'Dividend Payment', amount: 250, type: 'income', cat: 'Investment' },
+      { id: 12, date: '2025-02-20', desc: 'Internet Bill', amount: 59.99, type: 'expense', cat: 'Bills & Utilities' },
+      { id: 13, date: '2025-03-01', desc: 'Salary', amount: 5200, type: 'income', cat: 'Salary' },
+      { id: 14, date: '2025-03-05', desc: 'Coffee Shop', amount: 28.40, type: 'expense', cat: 'Food & Dining' },
+      { id: 15, date: '2025-03-10', desc: 'Book Purchase', amount: 22.99, type: 'expense', cat: 'Shopping' }
+    ],
+    
+    nextId: 16,
+    
+    init() {
+    //   window.elementSdk.init({
+    //     defaultConfig: this.defaultConfig,
+    //     onConfigChange: async (config) => {
+    //       const titleEl = document.getElementById('dashboard-title');
+    //       if (titleEl) titleEl.textContent = config.dashboard_title || this.defaultConfig.dashboard_title;
+    //     },
+    //     mapToCapabilities: (config) => ({
+    //       recolorables: [],
+    //       borderables: [],
+    //       fontEditable: undefined,
+    //       fontSizeable: undefined
+    //     }),
+    //     mapToEditPanelValues: (config) => new Map([
+    //       ['dashboard_title', config.dashboard_title || this.defaultConfig.dashboard_title]
+    //     ])
+    //   });
+      
+      this.state.transactions = [...this.mockTransactions];
+      
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        this.state.currentUser = JSON.parse(storedUser);
+        this.state.isAuthenticated = true;
+      }
+      
+      document.getElementById('language-select').value = this.state.language;
+      document.getElementById('country-select').value = this.state.country;
+      
+      this.applyTheme();
+      if (this.state.isAuthenticated) {
+        this.showDashboard();
+      } else {
+        this.showAuthPanel();
+      }
+      lucide.createIcons();
+      
+      window.addEventListener('resize', () => this.renderTrendChart());
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('[onclick*="toggleUserMenu"]') && !e.target.closest('#user-menu')) {
+          document.getElementById('user-menu').classList.add('hidden');
+        }
+      });
+    },
+    
+    cs() {
+      const curr = CURRENCIES[this.state.country] || CURRENCIES.US;
+      return curr.symbol;
+    },
+    
+    getCurrency() {
+      return CURRENCIES[this.state.country] || CURRENCIES.US;
+    },
+    
+    fmt(n) {
+      const curr = this.getCurrency();
+      return curr.symbol + Math.abs(n).toLocaleString(curr.locale, { minimumFractionDigits: curr.decimals, maximumFractionDigits: curr.decimals });
+    },
+    
+    toast(msg, type = 'success') {
+      const t = document.createElement('div');
+      t.className = `toast px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg ${type === 'success' ? 'gradient-accent text-black' : 'bg-rose-500/90 text-white'}`;
+      t.textContent = msg;
+      document.getElementById('toast-container').appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    },
+    
+    showAuthPanel() {
+      const authContent = document.getElementById('auth-content');
+      authContent.innerHTML = `
+        <div class="space-y-4">
+          <button onclick="window.APP.showLogin()" class="w-full gradient-accent text-black font-semibold py-3 rounded-lg button-glow text-sm hover:shadow-xl transition-all">Login</button>
+          <button onclick="window.APP.showSignup()" class="w-full bg-white/10 text-white font-semibold py-3 rounded-lg button-glow text-sm border border-white/20 hover:bg-white/20 transition-all">Create Account</button>
+          <div class="pt-2 text-xs text-gray-500 text-center">
+            <p>Demo: Use any email and password</p>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    },
+    
+    showLogin() {
+      const authContent = document.getElementById('auth-content');
+      authContent.innerHTML = `
+        <form onsubmit="window.APP.handleLogin(event)" class="space-y-4">
+          <div><label class="block text-xs text-gray-400 mb-2">Email</label> <input type="email" id="login-email" placeholder="your@email.com" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500" required></div>
+          <div><label class="block text-xs text-gray-400 mb-2">Password</label> <input type="password" id="login-pass" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500" required></div>
+          <button type="submit" class="w-full gradient-accent text-black font-semibold py-2.5 rounded-lg button-glow text-sm">Login</button>
+          <button type="button" onclick="window.APP.showAuthPanel()" class="w-full text-gray-400 hover:text-white text-sm transition-colors">Back</button>
+        </form>
+      `;
+    },
+    
+    showSignup() {
+      const authContent = document.getElementById('auth-content');
+      authContent.innerHTML = `
+        <form onsubmit="window.APP.handleSignup(event)" class="space-y-4">
+          <div><label class="block text-xs text-gray-400 mb-2">Full Name</label> <input type="text" id="signup-name" placeholder="John Doe" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500" required></div>
+          <div><label class="block text-xs text-gray-400 mb-2">Email</label> <input type="email" id="signup-email" placeholder="your@email.com" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500" required></div>
+          <div><label class="block text-xs text-gray-400 mb-2">Password</label> <input type="password" id="signup-pass" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500" required></div>
+          <button type="submit" class="w-full gradient-accent text-black font-semibold py-2.5 rounded-lg button-glow text-sm">Create Account</button>
+          <button type="button" onclick="window.APP.showAuthPanel()" class="w-full text-gray-400 hover:text-white text-sm transition-colors">Back</button>
+        </form>
+      `;
+    },
+    
+    handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const name = email.split('@')[0];
+      this.state.isAuthenticated = true;
+      this.state.currentUser = { name, email, role: 'user' };
+      localStorage.setItem('user', JSON.stringify(this.state.currentUser));
+      this.showDashboard();
+      this.toast('Welcome back, ' + name + '!');
+    },
+    
+    handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      this.state.isAuthenticated = true;
+      this.state.currentUser = { name, email, role: 'user' };
+      localStorage.setItem('user', JSON.stringify(this.state.currentUser));
+      this.showDashboard();
+      this.toast('Account created! Welcome, ' + name);
+    },
+    
+    showDashboard() {
+      document.getElementById('auth-panel').classList.add('hidden');
+      document.getElementById('main-dashboard').classList.remove('hidden');
+      this.refreshAll();
+      lucide.createIcons();
+    },
+    
+    logout() {
+      this.state.isAuthenticated = false;
+      this.state.currentUser = null;
+      localStorage.removeItem('user');
+      document.getElementById('user-menu').classList.add('hidden');
+      document.getElementById('auth-panel').classList.remove('hidden');
+      document.getElementById('main-dashboard').classList.add('hidden');
+      this.showAuthPanel();
+      this.toast('Logged out successfully', 'info');
+    },
+    
+    switchLanguage(lang) {
+      this.state.language = lang;
+      localStorage.setItem('language', lang);
+      document.getElementById('language-select').value = lang;
+      this.updateUIText();
+    },
+    
+    switchCountry(country) {
+      this.state.country = country;
+      localStorage.setItem('country', country);
+      document.getElementById('country-select').value = country;
+      this.refreshAll();
+    },
+    
+    updateUIText() {
+      if (document.getElementById('dashboard-title')) {
+        document.getElementById('dashboard-title').textContent = window.t('dashboardTitle');
+        document.getElementById('user-greeting').textContent = window.t('welcomeBack');
+      }
+      if (document.getElementById('role-badge')) {
+        document.getElementById('role-badge').textContent = this.state.role === 'admin' ? window.t('admin') : window.t('viewer');
+      }
+      this.renderTransactions();
+      if (this.state.activeTab === 'insights') this.renderInsights();
+    },
+    
+    toggleUserMenu() {
+      const menu = document.getElementById('user-menu');
+      menu.classList.toggle('hidden');
+      if (!menu.classList.contains('hidden') && this.state.currentUser) {
+        menu.innerHTML = `
+          <div class="px-4 py-2.5 border-b border-white/5">
+            <p class="text-xs text-gray-500 mb-1">${window.t('loggedInAs')}</p>
+            <p class="text-sm text-white font-medium">${this.state.currentUser.name}</p>
+            <p class="text-xs text-gray-500">${this.state.currentUser.email}</p>
+          </div>
+          <button onclick="window.APP.logout()" class="w-full px-4 py-2.5 text-sm text-left text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors"><i data-lucide="log-out" class="w-4 h-4"></i> ${window.t('logout')}</button>
+        `;
+        lucide.createIcons();
+      }
+    },
+    
+    toggleTheme() {
+      this.state.theme = this.state.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', this.state.theme);
+      this.applyTheme();
+    },
+    
+    applyTheme() {
+      const body = document.body;
+      const icon = document.getElementById('theme-icon');
+      body.classList.remove('dark-mode', 'light-mode');
+      body.classList.add(this.state.theme + '-mode');
+      if (this.state.theme === 'light') {
+        icon.setAttribute('data-lucide', 'sun');
+        document.body.style.background = '#ffffff';
+      } else {
+        icon.setAttribute('data-lucide', 'moon');
+        document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #020617 50%, #001f3f 100%)';
+      }
+      lucide.createIcons();
+    },
+    
+    showTab(tab) {
+      this.state.activeTab = tab;
+      ['overview', 'transactions', 'insights'].forEach(t => {
+        document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById('tab-' + t);
+        if (t === tab) {
+          btn.classList.add('tab-active');
+          btn.classList.remove('text-gray-500');
+        } else {
+          btn.classList.remove('tab-active');
+          btn.classList.add('text-gray-500');
+        }
+      });
+      if (tab === 'insights') this.renderInsights();
+    },
+    
+    refreshSummaryCards() {
+      const income = this.state.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+      const expenses = this.state.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+      const balance = income - expenses;
+      const savings = balance;
+      document.getElementById('card-balance').textContent = this.fmt(balance);
+      document.getElementById('card-income').textContent = this.fmt(income);
+      document.getElementById('card-expenses').textContent = this.fmt(expenses);
+      document.getElementById('card-savings').textContent = this.fmt(savings);
+    },
+    
+    setTrendRange(r) {
+      this.state.trendRange = r;
+      document.getElementById('trend-6m').className = `px-2 py-1 rounded text-xs ${r === '6m' ? 'bg-emerald-500/20 text-emerald-300' : 'text-gray-500 hover:text-gray-300'}`;
+      document.getElementById('trend-1y').className = `px-2 py-1 rounded text-xs ${r === '1y' ? 'bg-emerald-500/20 text-emerald-300' : 'text-gray-500 hover:text-gray-300'}`;
+      this.renderTrendChart();
+    },
+    
+    renderTrendChart() {
+      const months = this.state.trendRange === '6m' ? ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'] : ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+      const baseValues = this.state.trendRange === '6m' ? [18200, 19800, 20100, 21500, 23200, 24580] : [12000, 13400, 14200, 15100, 15800, 16900, 18200, 19800, 20100, 21500, 23200, 24580];
+      const svg = document.getElementById('trend-svg');
+      const w = svg.clientWidth || 600;
+      const h = svg.clientHeight || 180;
+      const pad = { t: 10, b: 5, l: 0, r: 0 };
+      const cw = w - pad.l - pad.r;
+      const ch = h - pad.t - pad.b;
+      const min = Math.min(...baseValues) * 0.9;
+      const max = Math.max(...baseValues) * 1.05;
+      const points = baseValues.map((v, i) => {
+        const x = pad.l + (i / (baseValues.length - 1)) * cw;
+        const y = pad.t + ch - ((v - min) / (max - min)) * ch;
+        return { x, y };
+      });
+      const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+      const areaD = pathD + ` L${points[points.length - 1].x},${h} L${points[0].x},${h} Z`;
+      svg.innerHTML = `<defs><lineargradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.3" /><stop offset="100%" stop-color="#6ee7b7" stop-opacity="0" /></lineargradient></defs><path d="${areaD}" fill="url(#tg)" /><path d="${pathD}" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#0c0f1a" stroke="#6ee7b7" stroke-width="2" />`).join('')}`;
+      document.getElementById('trend-labels').innerHTML = months.map(m => `<span>${m}</span>`).join('');
+    },
+    
+    renderDonutChart() {
+      const expenses = this.state.transactions.filter(t => t.type === 'expense');
+      const catTotals = {};
+      expenses.forEach(t => {
+        catTotals[t.cat] = (catTotals[t.cat] || 0) + t.amount;
+      });
+      const sorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+      const total = sorted.reduce((s, [, v]) => s + v, 0);
+      const colors = ['#6ee7b7', '#60a5fa', '#f472b6', '#fbbf24', '#a78bfa', '#fb923c', '#34d399', '#f87171'];
+      const svg = document.getElementById('donut-chart');
+      const cx = 80, cy = 80, r = 60, sw = 16;
+      const circ = 2 * Math.PI * r;
+      let offset = 0;
+      svg.innerHTML = sorted.map(([cat, val], i) => {
+        const pct = val / total;
+        const dash = pct * circ;
+        const seg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[i % colors.length]}" stroke-width="${sw}" stroke-dasharray="${dash} ${circ - dash}" stroke-dashoffset="${-offset}" class="donut-segment" transform="rotate(-90 ${cx} ${cy})" />`;
+        offset += dash;
+        return seg;
+      }).join('') + `<text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#fff" font-size="16" font-weight="700" font-family="Space Mono, monospace">${this.cs()}${Math.round(total)}</text><text x="${cx}" y="${cy + 12}" text-anchor="middle" fill="#64748b" font-size="10">total spent</text>`;
+      document.getElementById('donut-legend').innerHTML = sorted.map(([cat, val], i) => `
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full" style="background:${colors[i % colors.length]}"></span>
+            <span class="text-gray-400">${cat}</span>
+          </div>
+          <span class="text-gray-300 font-mono">${Math.round(val / total * 100)}%</span>
+        </div>
+      `).join('');
+    },
+    
+    populateCategoryFilter() {
+      const cats = [...new Set(this.state.transactions.map(t => t.cat))].sort();
+      const sel = document.getElementById('tx-filter-cat');
+      sel.innerHTML = '<option value="all">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    },
+    
+    filterTransactions() {
+      this.renderTransactions();
+    },
+    
+    getFilteredTransactions() {
+      const search = document.getElementById('tx-search').value.toLowerCase();
+      const typeF = document.getElementById('tx-filter-type').value;
+      const catF = document.getElementById('tx-filter-cat').value;
+      const sort = document.getElementById('tx-sort').value;
+      let txs = this.state.transactions.filter(t => {
+        if (search && !t.desc.toLowerCase().includes(search) && !t.cat.toLowerCase().includes(search)) return false;
+        if (typeF !== 'all' && t.type !== typeF) return false;
+        if (catF !== 'all' && t.cat !== catF) return false;
+        return true;
+      });
+      txs.sort((a, b) => {
+        switch (sort) {
+          case 'date-asc': return a.date.localeCompare(b.date);
+          case 'date-desc': return b.date.localeCompare(a.date);
+          case 'amount-desc': return b.amount - a.amount;
+          case 'amount-asc': return a.amount - b.amount;
+        }
+      });
+      return txs;
+    },
+    
+    renderTransactions() {
+      const txs = this.getFilteredTransactions();
+      const list = document.getElementById('tx-list');
+      const empty = document.getElementById('tx-empty');
+      if (txs.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      const isAdmin = this.state.role === 'admin';
+      const catIcons = { 'Food & Dining': 'utensils', 'Shopping': 'shopping-bag', 'Transport': 'car', 'Entertainment': 'film', 'Bills & Utilities': 'zap', 'Health': 'heart', 'Salary': 'briefcase', 'Freelance': 'code', 'Investment': 'trending-up', 'Other': 'circle' };
+      list.innerHTML = txs.map(t => {
+        const isIncome = t.type === 'income';
+        const iconName = catIcons[t.cat] || 'circle';
+        return `
+          <div class="grid grid-cols-12 gap-4 px-5 py-3 items-center hover:bg-white/[0.02] transition-colors text-sm" data-txid="${t.id}">
+            <div class="col-span-6 sm:col-span-3 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg ${isIncome ? 'bg-emerald-500/10' : 'bg-rose-500/10'} flex items-center justify-center flex-shrink-0">
+                <i data-lucide="${iconName}" class="w-3.5 h-3.5 ${isIncome ? 'text-emerald-400' : 'text-rose-400'}"></i>
+              </div>
+              <div class="sm:hidden flex-1 min-w-0">
+                <p class="text-gray-200 truncate">${t.desc}</p>
+                <p class="text-xs text-gray-500">${t.cat}</p>
+              </div>
+              <span class="hidden sm:inline text-gray-400">${new Date(t.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </div>
+            <div class="hidden sm:block col-span-3 text-gray-200 truncate">${t.desc}</div>
+            <div class="hidden sm:block col-span-2"><span class="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400">${t.cat}</span></div>
+            <div class="col-span-4 sm:col-span-2 text-right font-mono ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">${isIncome ? '+' : '-'}${this.fmt(t.amount)}</div>
+            <div class="col-span-2 sm:col-span-2 text-right flex justify-end gap-1">
+              ${isAdmin ? `
+                <button onclick="window.APP.editTransaction(${t.id})" class="p-1.5 rounded-lg hover:bg-white/5 text-gray-500 hover:text-gray-300 transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                <button onclick="window.APP.confirmDelete(${t.id}, this)" class="p-1.5 rounded-lg hover:bg-rose-500/10 text-gray-500 hover:text-rose-400 transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    },
+    
+    openAddModal() {
+      document.getElementById('modal-title').textContent = 'Add Transaction';
+      document.getElementById('tx-form').reset();
+      document.getElementById('tx-edit-id').value = '';
+      document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-overlay').classList.remove('hidden');
+      lucide.createIcons();
+    },
+    
+    editTransaction(id) {
+      const t = this.state.transactions.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('modal-title').textContent = 'Edit Transaction';
+      document.getElementById('tx-edit-id').value = id;
+      document.getElementById('tx-date').value = t.date;
+      document.getElementById('tx-desc').value = t.desc;
+      document.getElementById('tx-amount').value = t.amount;
+      document.getElementById('tx-type').value = t.type;
+      document.getElementById('tx-cat').value = t.cat;
+      document.getElementById('modal-overlay').classList.remove('hidden');
+      lucide.createIcons();
+    },
+    
+    closeModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    },
+    
+    saveTransaction(e) {
+      e.preventDefault();
+      const editId = document.getElementById('tx-edit-id').value;
+      const data = {
+        date: document.getElementById('tx-date').value,
+        desc: document.getElementById('tx-desc').value,
+        amount: parseFloat(document.getElementById('tx-amount').value),
+        type: document.getElementById('tx-type').value,
+        cat: document.getElementById('tx-cat').value
+      };
+      if (editId) {
+        const idx = this.state.transactions.findIndex(t => t.id === parseInt(editId));
+        if (idx >= 0) {
+          this.state.transactions[idx] = { ...this.state.transactions[idx], ...data };
+        }
+        this.toast('Transaction updated');
+      } else {
+        this.state.transactions.push({ id: this.nextId++, ...data });
+        this.toast('Transaction added');
+      }
+      this.closeModal();
+      this.refreshAll();
+    },
+    
+    confirmDelete(id, btn) {
+      const row = btn.closest('[data-txid]');
+      const actionsDiv = row.querySelector('.col-span-2:last-child') || btn.parentElement;
+      actionsDiv.innerHTML = `
+        <span class="text-xs text-rose-400 mr-1">Delete?</span>
+        <button onclick="window.APP.deleteTransaction(${id})" class="text-xs px-2 py-1 bg-rose-500/20 text-rose-300 rounded hover:bg-rose-500/30 transition-colors">Yes</button>
+        <button onclick="window.APP.renderTransactions()" class="text-xs px-2 py-1 bg-white/5 text-gray-400 rounded hover:bg-white/10 transition-colors">No</button>
+      `;
+    },
+    
+    deleteTransaction(id) {
+      this.state.transactions = this.state.transactions.filter(t => t.id !== id);
+      this.toast('Transaction deleted');
+      this.refreshAll();
+    },
+    
+    renderInsights() {
+      const expenses = this.state.transactions.filter(t => t.type === 'expense');
+      const income = this.state.transactions.filter(t => t.type === 'income');
+      const catTotals = {};
+      expenses.forEach(t => {
+        catTotals[t.cat] = (catTotals[t.cat] || 0) + t.amount;
+      });
+      const sorted = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+      const topCat = sorted[0] || ['None', 0];
+      const totalExp = expenses.reduce((s, t) => s + t.amount, 0);
+      const totalInc = income.reduce((s, t) => s + t.amount, 0);
+      const avgTx = expenses.length > 0 ? totalExp / expenses.length : 0;
+      const savingsRate = totalInc > 0 ? ((totalInc - totalExp) / totalInc * 100) : 0;
+      const grid = document.getElementById('insights-grid');
+      grid.innerHTML = `
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-1">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="flame" class="w-4 h-4 text-amber-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Top Spending</span>
+          </div>
+          <p class="text-xl font-bold text-white">${topCat[0]}</p>
+          <p class="text-sm text-gray-400 mt-1">${this.fmt(topCat[1])} (${totalExp > 0 ? Math.round(topCat[1] / totalExp * 100) : 0}% of expenses)</p>
+        </div>
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-2">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="calculator" class="w-4 h-4 text-blue-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Avg Transaction</span>
+          </div>
+          <p class="text-xl font-bold text-white">${this.fmt(avgTx)}</p>
+          <p class="text-sm text-gray-400 mt-1">across ${expenses.length} expenses</p>
+        </div>
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-3">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Savings Rate</span>
+          </div>
+          <p class="text-xl font-bold text-white">${savingsRate.toFixed(1)}%</p>
+          <p class="text-sm text-gray-400 mt-1">${savingsRate >= 20 ? '🎯 On track!' : '⚡ Room to improve'}</p>
+        </div>
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-4">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="receipt" class="w-4 h-4 text-rose-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Total Transactions</span>
+          </div>
+          <p class="text-xl font-bold text-white">${this.state.transactions.length}</p>
+          <p class="text-sm text-gray-400 mt-1">${income.length} income · ${expenses.length} expenses</p>
+        </div>
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-5">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="trophy" class="w-4 h-4 text-yellow-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Biggest Expense</span>
+          </div>
+          <p class="text-xl font-bold text-white">${expenses.length > 0 ? expenses.sort((a, b) => b.amount - a.amount)[0].desc : 'None'}</p>
+          <p class="text-sm text-gray-400 mt-1">${expenses.length > 0 ? this.fmt(expenses.sort((a, b) => b.amount - a.amount)[0].amount) : this.fmt(0)}</p>
+        </div>
+        <div class="bg-[#161b2e] rounded-xl p-5 border border-white/5 fade-up fade-up-5">
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="layers" class="w-4 h-4 text-violet-400"></i>
+            <span class="text-xs text-gray-500 uppercase tracking-wider">Categories Used</span>
+          </div>
+          <p class="text-xl font-bold text-white">${Object.keys(catTotals).length}</p>
+          <p class="text-sm text-gray-400 mt-1">spending categories</p>
+        </div>
+      `;
+      const monthlyData = {};
+      this.state.transactions.forEach(t => {
+        const m = t.date.substring(0, 7);
+        if (!monthlyData[m]) monthlyData[m] = { income: 0, expense: 0 };
+        monthlyData[m][t.type] += t.amount;
+      });
+      const months = Object.keys(monthlyData).sort();
+      const maxVal = Math.max(...months.map(m => Math.max(monthlyData[m].income, monthlyData[m].expense)), 1);
+      document.getElementById('monthly-bars').innerHTML = months.map(m => {
+        const d = monthlyData[m];
+        const ih = (d.income / maxVal * 100);
+        const eh = (d.expense / maxVal * 100);
+        return `
+          <div class="flex-1 flex items-end gap-1 justify-center">
+            <div class="chart-bar w-5 rounded-t bg-emerald-500/60" style="height:${ih}%" title="Income: ${this.fmt(d.income)}"></div>
+            <div class="chart-bar w-5 rounded-t bg-rose-500/60" style="height:${eh}%" title="Expenses: ${this.fmt(d.expense)}"></div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('monthly-labels').innerHTML = months.map(m => {
+        const [y, mo] = m.split('-');
+        return `<span class="flex-1 text-center">${new Date(parseInt(y), parseInt(mo) - 1).toLocaleDateString('en-US', { month: 'short' })}</span>`;
+      }).join('') + `
+        <div class="flex items-center gap-3 ml-4">
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500/60"></span>Income</span>
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500/60"></span>Expenses</span>
+        </div>
+      `;
+      lucide.createIcons();
+    },
+    
+    exportCSV() {
+      const txs = this.getFilteredTransactions();
+      const header = 'Date,Description,Category,Type,Amount\n';
+      const rows = txs.map(t => `${t.date},"${t.desc}","${t.cat}",${t.type},${t.amount}`).join('\n');
+      const blob = new Blob([header + rows], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'transactions.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      this.toast('CSV exported');
+    },
+    
+    refreshAll() {
+      this.refreshSummaryCards();
+      this.renderTrendChart();
+      this.renderDonutChart();
+      this.populateCategoryFilter();
+      this.renderTransactions();
+      if (this.state.activeTab === 'insights') this.renderInsights();
+    }
+  };
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e7e543c77d30ed9',t:'MTc3NTQ1MjY3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
